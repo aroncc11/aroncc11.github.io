@@ -90,6 +90,8 @@ a{color:inherit}
     <p class="sv-src">Telemetría real que envía el propio juego, del <b data-draw="v" data-source="kpis" data-row="0" data-field="desde" data-fmt="fecha">—</b> al <b data-draw="v" data-source="kpis" data-row="0" data-field="hasta" data-fmt="fecha">—</b>: <b data-draw="v" data-source="kpis" data-row="0" data-field="inicios" data-fmt="int">—</b> partidas abiertas y <b data-draw="v" data-source="kpis" data-row="0" data-field="n_ses" data-fmt="int">—</b> sesiones cerradas, sin nombres de jugador. <a href="https://aroncc.itch.io/surie-y-el-jugete-robado">Jugar en itch.io</a></p>
   </header>
 
+  <p class="sv-src" id="sv-live">Cargando datos de la base del juego…</p>
+
   <section class="sv-tiles" aria-label="Resumen">
     <div class="sv-tile"><span class="sv-tile-l">Partidas abiertas</span><span class="sv-tile-v"><b data-draw="v" data-source="kpis" data-row="0" data-field="inicios" data-fmt="int">—</b></span><span class="sv-tile-n">Cada vez que alguien empieza el nivel</span></div>
     <div class="sv-tile"><span class="sv-tile-l">Sin ninguna acción</span><span class="sv-tile-v"><b data-draw="v" data-source="kpis" data-row="0" data-field="pct_sin_accion" data-fmt="pct">—</b></span><span class="sv-tile-n">No dieron ni un salto</span></div>
@@ -240,7 +242,7 @@ a{color:inherit}
       <li>Partida abierta es cada inicio de nivel. Sesión cerrada es la que registra un resultado: victoria, derrota o abandono.</li>
       <li>La muestra son compañeros y el equipo, casi todos en la computadora del equipo y pocos desde el navegador. Con tan pocas sesiones, los porcentajes orientan decisiones pero no son estadística concluyente.</li>
       <li>Los descansos del inicio cuentan los momentos en que Surie se queda quieta en la cama de arranque. Los usamos como señal de espera, no como error.</li>
-      <li>Las tablas están fijas al corte y no se actualizan solas.</li>
+      <li>Las cifras se leen en vivo de la base del juego y se refrescan cada minuto. Las lecturas y decisiones de diseño se escribieron con el corte del 8 de noviembre de 2026 y no cambian solas.</li>
     </ul>
   </details>
 
@@ -399,7 +401,7 @@ dash.calc('kpis', {
     const sec = (n) => secciones.find((r) => r.seccion === n);
     const suma = (k) => secciones.reduce((a, r) => a + r[k], 0);
     const ev = (k) => eventos.find((r) => r.evento === k);
-    const media = (a) => a.reduce((x, y) => x + y, 0) / a.length;
+    const media = (a) => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0);
     const inicios = paso(1), activos = paso(2), ganaron = paso(5);
     const estres = suma('estres');
     const vic = sesiones.filter((r) => r.resultado === 'victoria');
@@ -407,14 +409,14 @@ dash.calc('kpis', {
     const med = dv.length % 2 ? dv[(dv.length - 1) / 2] : (dv[dv.length / 2 - 1] + dv[dv.length / 2]) / 2;
     const comp = bonus.filter((r) => r.completo);
     const web = entornos.filter((r) => r.entorno.indexOf('(web)') >= 0);
-    const safari = entornos.find((r) => r.entorno.indexOf('Safari') >= 0);
+    const safari = entornos.find((r) => r.entorno.indexOf('Safari') >= 0) || {sesiones: 0, con_accion: 0};
     const fechas = sesiones.map((r) => r.fecha).sort();
     const tarde = acc('dash', 3) + acc('dash', 4);
     const BONUS_CROQ = 15;
     const aband = sesiones.filter((r) => r.resultado === 'abandono');
     const mediana = (a) => { const s = [...a].sort((x, y) => x - y); return s.length % 2 ? s[(s.length - 1) / 2] : (s[s.length / 2 - 1] + s[s.length / 2]) / 2; };
     const mv = (k) => media(vic.map((r) => r[k]));
-    const gMin = Math.min(...comp.map((r) => r.golpes)), gMax = Math.max(...comp.map((r) => r.golpes));
+    const gMin = comp.length ? Math.min(...comp.map((r) => r.golpes)) : 0, gMax = comp.length ? Math.max(...comp.map((r) => r.golpes)) : 0;
     const pts = comp.map((r) => r.puntos);
     return [{
       inicios: inicios, activos: activos, sin_accion: inicios - activos,
@@ -443,10 +445,10 @@ dash.calc('kpis', {
       med_aband: mediana(aband.map((r) => r.duracion_s)),
       desc_aband: media(aband.map((r) => r.descansos)), desc_vic: media(vic.map((r) => r.descansos)),
       saltos_vic: mv('saltos'), dashes_vic: mv('dashes'), caidas_vic: mv('caidas'), estres_vic: mv('estres'), croq_vic: mv('croquetas'),
-      bonus_pts_media: media(pts), bonus_pts_min: Math.min(...pts), bonus_pts_max: Math.max(...pts),
+      bonus_pts_media: media(pts), bonus_pts_min: pts.length ? Math.min(...pts) : 0, bonus_pts_max: pts.length ? Math.max(...pts) : 0,
       bonus_croq_media: media(comp.map((r) => r.croquetas)), bonus_croq_total: BONUS_CROQ,
       golpes_min: gMin, golpes_max: gMax,
-      pts_menos_golpes: comp.find((r) => r.golpes === gMin).puntos, pts_mas_golpes: comp.find((r) => r.golpes === gMax).puntos,
+      pts_menos_golpes: (comp.find((r) => r.golpes === gMin) || {puntos: 0}).puntos, pts_mas_golpes: (comp.find((r) => r.golpes === gMax) || {puntos: 0}).puntos,
       desde: fechas[0], hasta: fechas[fechas.length - 1]
     }];
   }
@@ -741,6 +743,26 @@ dash.draw('tb', (tbody) => {
   });
 });
 </script>
-<script>dash.__run();</script>
+<script>
+const SB_URL = 'https://wzgnpnqiwmcfhyhcfsqq.supabase.co';
+const SB_KEY = 'sb_publishable_oBzvjyYoRN9r0wPj9_fy_g_U1r0__RX';
+dash.__run();
+async function cargarEnVivo() {
+  const el = document.getElementById('sv-live');
+  try {
+    const r = await fetch(SB_URL + '/rest/v1/rpc/surie_dashboard', {method: 'POST', headers: {apikey: SB_KEY, 'Content-Type': 'application/json'}, body: '{}'});
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const vivo = await r.json();
+    Object.keys(vivo).forEach((k) => { DATA[k] = vivo[k]; });
+    Object.keys(__cache).forEach((k) => { delete __cache[k]; });
+    dash.__run();
+    el.textContent = 'Datos en vivo de la base del juego. Última lectura: ' + new Date().toLocaleTimeString('es-MX', {hour: '2-digit', minute: '2-digit'}) + '.';
+  } catch (e) {
+    el.textContent = 'No se pudo leer la base del juego. Se muestran los datos del corte del 8 de noviembre de 2026.';
+  }
+}
+cargarEnVivo();
+setInterval(cargarEnVivo, 60000);
+</script>
 </body>
 </html>
