@@ -1,0 +1,746 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Surie y el juguete robado: validación de diseño</title>
+<meta name="description" content="Dashboard de métricas de validación de diseño del prototipo Surie y el juguete robado.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600&family=Source+Serif+4:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--color-fg:#1d2330;--color-fg-muted:#566074;--color-bg:#f4f6f9;--color-panel:#fff;--color-border-line:#d8dee8;--color-bad:#b3362b;
+--cds-chart-grid:#e4e9f0;--cds-chart-reference:#8a94a6;--cds-chart-status-critical:#c8402f;--cds-chart-muted:#aab3c2;
+--cds-radius:8px;--cds-gap-sm:8px;--cds-gap-md:12px;--cds-gap-lg:18px;--cds-gap-xl:30px;--cds-pad-xs:4px;--cds-pad-sm:8px;--cds-pad-md:12px;--cds-pad-lg:18px;
+--cds-font-size-caption:12.5px;--cds-font-size-body:14.5px;--cds-font-size-heading:16.5px;--cds-font-weight-medium:600;
+--cds-dur-slow:420ms;--cds-ease-out:cubic-bezier(.2,.7,.2,1);--cds-surface-popover:#fff;--cds-border:#d8dee8;--cds-shadow-popover:0 4px 14px rgba(0,0,0,.18);
+--font-anthropic-sans:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;--font-anthropic-serif:"Source Serif 4",Georgia,serif;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--color-fg:#e6e9ef;--color-fg-muted:#9aa4b5;--color-bg:#12161d;--color-panel:#1a2029;--color-border-line:#2b3441;--color-bad:#f08577;
+--cds-chart-grid:#28303c;--cds-chart-reference:#6f7a8e;--cds-chart-status-critical:#ef6a5a;--cds-chart-muted:#4a5466;--cds-surface-popover:#222a36;--cds-border:#2b3441;--cds-shadow-popover:0 4px 14px rgba(0,0,0,.5);color-scheme:dark}}
+html,body{margin:0}
+body{background:var(--color-bg);color:var(--color-fg);font:var(--cds-font-size-body)/1.45 var(--font-anthropic-sans)}
+a{color:inherit}
+.page{padding:clamp(20px,4vw,44px) max(16px,env(safe-area-inset-right,0px)) 60px max(16px,env(safe-area-inset-left,0px));box-sizing:border-box}
+
+.sv { max-width: 1040px; margin-inline: auto; display: flex; flex-direction: column; gap: var(--cds-gap-xl); font-family: var(--font-anthropic-sans); }
+.sv * { min-width: 0; }
+.sv b { font-weight: var(--cds-font-weight-medium); }
+.sv-eyebrow { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); letter-spacing: .04em; text-transform: uppercase; }
+.sv h1 { margin: 6px 0 10px; font-family: var(--font-anthropic-serif); font-weight: 400; font-size: clamp(1.9rem, 5vw, 2.6rem); line-height: 1.1; text-wrap: balance; }
+.sv-lede { margin: 0; max-width: 62ch; font-size: var(--cds-font-size-heading); line-height: 1.5; }
+.sv-src { margin: 10px 0 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.sv-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11.5rem), 1fr)); gap: var(--cds-gap-md); }
+.sv-tile { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: flex; flex-direction: column; gap: 4px; }
+.sv-tile-l { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.sv-tile-v { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: 2.1rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.sv-tile-n { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.sv-q { display: flex; flex-direction: column; gap: var(--cds-gap-md); scroll-margin-top: 16px; }
+.sv-qtag { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); letter-spacing: .04em; text-transform: uppercase; }
+.sv h2 { margin: 0; font-family: var(--font-anthropic-serif); font-weight: 400; font-size: clamp(1.4rem, 3.6vw, 1.8rem); line-height: 1.2; text-wrap: balance; }
+.sv-metrics { margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: var(--cds-gap-sm) var(--cds-gap-lg); }
+.sv-metrics div { display: flex; flex-direction: column; gap: 2px; }
+.sv-metrics dt { font-weight: var(--cds-font-weight-medium); font-size: var(--cds-font-size-body); }
+.sv-metrics dd { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); line-height: 1.4; }
+.sv-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: var(--cds-gap-md); }
+.sv-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: flex; flex-direction: column; gap: var(--cds-gap-sm); }
+.sv-card h3 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+.sv-note { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); line-height: 1.4; }
+.sv-read { margin: 0; max-width: 70ch; line-height: 1.55; }
+.sv-decision { margin: 0; max-width: 70ch; padding: var(--cds-pad-sm) var(--cds-pad-md); border-left: 3px solid var(--cds-chart-reference); background: var(--color-panel); border-radius: 0 var(--cds-radius) var(--cds-radius) 0; line-height: 1.5; }
+.sv-chart { position: relative; display: flex; flex-direction: column; gap: 6px; min-height: 4rem; }
+.sv-row { display: grid; grid-template-columns: minmax(5.5rem, 34%) 1fr auto; align-items: center; gap: 10px; font-size: var(--cds-font-size-caption); }
+.sv-lab { color: var(--color-fg); line-height: 1.25; overflow-wrap: anywhere; }
+.sv-lab small { display: block; color: var(--color-fg-muted); }
+.sv-track { height: 18px; background: var(--cds-chart-grid); border-radius: var(--cds-radius); display: flex; overflow: hidden; }
+.sv-bar, .sv-seg { height: 100%; min-width: 0; }
+.sv-val { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.sv-val i { font-style: normal; color: var(--color-fg-muted); margin-left: 6px; }
+.sv-val .sv-loss { color: var(--color-bad); }
+.sv-row.sv-hot .sv-lab, .sv-row.sv-hot .sv-val b { color: var(--color-bad); }
+.sv-row.sv-split { margin-top: 6px; padding-top: 8px; border-top: 1px dashed var(--cds-chart-grid); }
+.sv-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.sv-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sv-legend em { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.sv-tip { position: absolute; z-index: 5; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); white-space: nowrap; }
+.sv-box { overflow: auto; max-height: 22rem; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); }
+.sv-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+.sv-table th, .sv-table td { padding: 6px 10px; text-align: right; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+.sv-table th:first-child, .sv-table td:first-child { text-align: left; }
+.sv-table th { position: sticky; top: 0; background: var(--color-panel); color: var(--color-fg-muted); font-weight: var(--cds-font-weight-medium); }
+.sv-stat { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--color-border-line); }
+.sv-stat b { font-variant-numeric: tabular-nums; }
+.sv-wrapx { overflow-x: auto; }
+.sv details { border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md) var(--cds-pad-lg); }
+.sv summary { cursor: pointer; font-weight: var(--cds-font-weight-medium); }
+.sv details ul { margin: 10px 0 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; line-height: 1.5; }
+@media (prefers-reduced-motion: no-preference) {
+  .sv-bar, .sv-seg { animation: sv-grow var(--cds-dur-slow) var(--cds-ease-out) both; transform-origin: left; }
+  @keyframes sv-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+
+<div class="sv">
+  <header>
+    <p class="sv-eyebrow">Validación de diseño del prototipo</p>
+    <h1>Surie y el juguete robado</h1>
+    <p class="sv-lede">Quien supera el inicio casi siempre termina el nivel: <b data-draw="v" data-source="kpis" data-row="0" data-field="pct_ganan_activos" data-fmt="pct">—</b> de quienes actúan lo logran. El problema aparece en los primeros segundos, donde <b data-draw="v" data-source="kpis" data-row="0" data-field="pct_sin_accion" data-fmt="pct">—</b> de las partidas abiertas no hacen nada y <b data-draw="v" data-source="kpis" data-row="0" data-field="pct_dash_tarde" data-fmt="pct">—</b> de los jugadores activos tardan en descubrir el dash o nunca lo usan.</p>
+    <p class="sv-src">Telemetría real que envía el propio juego, del <b data-draw="v" data-source="kpis" data-row="0" data-field="desde" data-fmt="fecha">—</b> al <b data-draw="v" data-source="kpis" data-row="0" data-field="hasta" data-fmt="fecha">—</b>: <b data-draw="v" data-source="kpis" data-row="0" data-field="inicios" data-fmt="int">—</b> partidas abiertas y <b data-draw="v" data-source="kpis" data-row="0" data-field="n_ses" data-fmt="int">—</b> sesiones cerradas, sin nombres de jugador. <a href="https://aroncc.itch.io/surie-y-el-jugete-robado">Jugar en itch.io</a></p>
+  </header>
+
+  <section class="sv-tiles" aria-label="Resumen">
+    <div class="sv-tile"><span class="sv-tile-l">Partidas abiertas</span><span class="sv-tile-v"><b data-draw="v" data-source="kpis" data-row="0" data-field="inicios" data-fmt="int">—</b></span><span class="sv-tile-n">Cada vez que alguien empieza el nivel</span></div>
+    <div class="sv-tile"><span class="sv-tile-l">Sin ninguna acción</span><span class="sv-tile-v"><b data-draw="v" data-source="kpis" data-row="0" data-field="pct_sin_accion" data-fmt="pct">—</b></span><span class="sv-tile-n">No dieron ni un salto</span></div>
+    <div class="sv-tile"><span class="sv-tile-l">Terminan el nivel</span><span class="sv-tile-v"><b data-draw="v" data-source="kpis" data-row="0" data-field="pct_ganan_activos" data-fmt="pct">—</b></span><span class="sv-tile-n">Entre quienes hicieron al menos una acción</span></div>
+    <div class="sv-tile"><span class="sv-tile-l">Mediana de una victoria</span><span class="sv-tile-v"><b data-draw="v" data-source="kpis" data-row="0" data-field="mediana_vic" data-fmt="s">—</b></span><span class="sv-tile-n">Tiempo de principio a fin</span></div>
+    <div class="sv-tile"><span class="sv-tile-l">Estrés en las secciones 2 y 3</span><span class="sv-tile-v"><b data-draw="v" data-source="kpis" data-row="0" data-field="pct_estres_s23" data-fmt="pct">—</b></span><span class="sv-tile-n">De todos los golpes de estrés</span></div>
+    <div class="sv-tile"><span class="sv-tile-l">Puntaje medio en la alacena</span><span class="sv-tile-v"><b data-draw="v" data-source="kpis" data-row="0" data-field="bonus_pts_media" data-fmt="int">—</b></span><span class="sv-tile-n">Puntos al llegar al frasco</span></div>
+  </section>
+
+  <section class="sv-q" id="p1">
+    <p class="sv-qtag">Pregunta 1</p>
+    <h2>¿La jugabilidad es clara para el jugador?</h2>
+    <dl class="sv-metrics">
+      <div><dt>M1 · Tiempo hasta el primer salto</dt><dd>Segundos entre el inicio del nivel y el primer salto.</dd></div>
+      <div><dt>M2 · Tiempo hasta el primer dash</dt><dd>Segundos entre el inicio del nivel y el primer uso del dash (Shift).</dd></div>
+      <div><dt>M3 · Partidas sin acción</dt><dd>Partidas abiertas en las que el jugador no dio ni un salto.</dd></div>
+    </dl>
+    <div class="sv-grid">
+      <div class="sv-card">
+        <h3>Tiempo hasta el primer salto</h3>
+        <p class="sv-note">Partidas por rango de tiempo, sobre todas las abiertas.</p>
+        <div class="sv-chart" data-draw="acc" data-medida="salto" data-source="acc_calc"></div>
+      </div>
+      <div class="sv-card">
+        <h3>Tiempo hasta el primer dash</h3>
+        <p class="sv-note">Partidas por rango de tiempo, sobre quienes dieron al menos un salto.</p>
+        <div class="sv-chart" data-draw="acc" data-medida="dash" data-source="acc_calc"></div>
+      </div>
+    </div>
+    <p class="sv-read"><b data-draw="v" data-source="kpis" data-row="0" data-field="saltos_rapidos" data-fmt="int">—</b> de <b data-draw="v" data-source="kpis" data-row="0" data-field="inicios" data-fmt="int">—</b> partidas saltaron en menos de <b data-draw="v" data-source="kpis" data-row="0" data-field="umbral_salto" data-fmt="int">—</b> segundos, así que el control básico se entiende solo. En cambio, <b data-draw="v" data-source="kpis" data-row="0" data-field="sin_accion" data-fmt="int">—</b> partidas (<b data-draw="v" data-source="kpis" data-row="0" data-field="pct_sin_accion" data-fmt="pct">—</b>) no hicieron nada. El dash se aprende tarde: <b data-draw="v" data-source="kpis" data-row="0" data-field="dash_tarde" data-fmt="int">—</b> de <b data-draw="v" data-source="kpis" data-row="0" data-field="activos" data-fmt="int">—</b> jugadores activos (<b data-draw="v" data-source="kpis" data-row="0" data-field="pct_dash_tarde" data-fmt="pct">—</b>) tardaron más de <b data-draw="v" data-source="kpis" data-row="0" data-field="umbral_dash" data-fmt="int">—</b> segundos en usarlo o nunca lo usaron.</p>
+    <p class="sv-decision"><b>Decisión de diseño.</b> Mostrar los controles en pantalla durante los primeros segundos y poner un aviso de Shift justo antes del primer hueco que exige dash.</p>
+  </section>
+
+  <section class="sv-q" id="p2">
+    <p class="sv-qtag">Pregunta 2</p>
+    <h2>¿El nivel de dificultad es adecuado?</h2>
+    <dl class="sv-metrics">
+      <div><dt>M4 · Tasa de victoria</dt><dd>Partidas terminadas entre partidas con al menos una acción.</dd></div>
+      <div><dt>M5 · Golpes de estrés</dt><dd>Por sección y por causa: Roomba, jarrón, agua, caída y ruido de la TV.</dd></div>
+      <div><dt>M6 · Caídas</dt><dd>Veces que Surie cae al vacío, por sección.</dd></div>
+      <div><dt>M7 · Vidas perdidas</dt><dd>Veces que el estrés llegó al máximo y Surie volvió a la cama.</dd></div>
+      <div><dt>M8 · Resultado de las sesiones</dt><dd>Victorias, abandonos y derrotas entre las sesiones cerradas.</dd></div>
+      <div><dt>M9 · Victorias por día de prueba</dt><dd>Sesiones cerradas y tasa de victoria en cada jornada.</dd></div>
+    </dl>
+    <div class="sv-card">
+      <h3>Golpes de estrés por sección y causa</h3>
+      <p class="sv-note">Cada barra suma los golpes de todas las partidas. La sección más larga indica dónde se concentra la dificultad.</p>
+      <div class="sv-chart" data-draw="estres" data-source="sec_calc"></div>
+    </div>
+    <div class="sv-grid">
+      <div class="sv-card">
+        <h3>Cómo terminan las sesiones</h3>
+        <p class="sv-note">Sesiones cerradas por resultado.</p>
+        <div class="sv-chart" data-draw="res" data-source="res_calc"></div>
+      </div>
+      <div class="sv-card">
+        <h3>Victorias por día de prueba</h3>
+        <p class="sv-note">Parte de cada barra: sesiones ganadas del total de ese día.</p>
+        <div class="sv-chart" data-draw="dia" data-source="dia_calc"></div>
+      </div>
+    </div>
+    <p class="sv-read">Las secciones 2 y 3 concentran <b data-draw="v" data-source="kpis" data-row="0" data-field="pct_estres_s23" data-fmt="pct">—</b> de los <b data-draw="v" data-source="kpis" data-row="0" data-field="estres_total" data-fmt="int">—</b> golpes de estrés, y la Roomba sola provoca <b data-draw="v" data-source="kpis" data-row="0" data-field="pct_roomba" data-fmt="pct">—</b>. Las caídas pesan en Cojines: <b data-draw="v" data-source="kpis" data-row="0" data-field="caidas_cojines" data-fmt="int">—</b> de <b data-draw="v" data-source="kpis" data-row="0" data-field="caidas_total" data-fmt="int">—</b>. Aun así solo se perdieron <b data-draw="v" data-source="kpis" data-row="0" data-field="perdidas_vida" data-fmt="int">—</b> vidas en <b data-draw="v" data-source="kpis" data-row="0" data-field="sesiones_perdieron" data-fmt="int">—</b> sesiones y hubo <b data-draw="v" data-source="kpis" data-row="0" data-field="derrotas" data-fmt="int">—</b> derrota completa. La dificultad es tolerante, con dos zonas de pico claras.</p>
+    <p class="sv-read">De las <b data-draw="v" data-source="kpis" data-row="0" data-field="n_ses" data-fmt="int">—</b> sesiones cerradas, <b data-draw="v" data-source="kpis" data-row="0" data-field="n_vic" data-fmt="int">—</b> fueron victorias y <b data-draw="v" data-source="kpis" data-row="0" data-field="n_aband" data-fmt="int">—</b> abandonos (<b data-draw="v" data-source="kpis" data-row="0" data-field="pct_aband" data-fmt="pct">—</b>). Un abandono dura una mediana de <b data-draw="v" data-source="kpis" data-row="0" data-field="med_aband" data-fmt="s">—</b>, contra <b data-draw="v" data-source="kpis" data-row="0" data-field="mediana_vic" data-fmt="s">—</b> de una victoria, y acumula <b data-draw="v" data-source="kpis" data-row="0" data-field="desc_aband" data-fmt="dec">—</b> descansos de media frente a <b data-draw="v" data-source="kpis" data-row="0" data-field="desc_vic" data-fmt="dec">—</b> en una victoria. Quien abandona pasa más tiempo quieto antes de irse. Las jornadas tienen pocos jugadores, así que la tasa de victoria cambia mucho de un día a otro.</p>
+    <p class="sv-decision"><b>Decisión de diseño.</b> Conservar el reto de Desarrollo y Variación, pero avisar el recorrido de la Roomba con una señal sonora. Subir la exigencia en las secciones que no generan golpes, como Complicación.</p>
+  </section>
+
+  <section class="sv-q" id="p3">
+    <p class="sv-qtag">Pregunta 3</p>
+    <h2>¿La interfaz o el flujo de juego genera confusión?</h2>
+    <dl class="sv-metrics">
+      <div><dt>M10 · Embudo de partida</dt><dd>Cuántas partidas llegan a cada paso y a cada sección.</dd></div>
+      <div><dt>M11 · Pausas, reinicios y menú</dt><dd>Con qué frecuencia el jugador interrumpe la partida y en qué sección.</dd></div>
+      <div><dt>M12 · Sesiones sin cierre</dt><dd>Partidas que se cerraron sin pasar por una pantalla final.</dd></div>
+      <div><dt>M13 · Acción en navegador</dt><dd>Sesiones web con al menos un salto, por navegador.</dd></div>
+    </dl>
+    <div class="sv-grid">
+      <div class="sv-card">
+        <h3>Embudo de la partida</h3>
+        <p class="sv-note">Partidas que llegan a cada paso, con las que se pierden respecto al paso anterior.</p>
+        <div class="sv-chart" data-draw="emb" data-source="emb_calc"></div>
+      </div>
+      <div class="sv-card">
+        <h3>Partidas que llegan a cada sección</h3>
+        <p class="sv-note">La pérdida más grande entre dos secciones aparece en rojo.</p>
+        <div class="sv-chart" data-draw="sec" data-source="sec_calc"></div>
+      </div>
+    </div>
+    <div class="sv-grid">
+      <div class="sv-card">
+        <h3>Acción por entorno de juego</h3>
+        <p class="sv-note">Sesiones registradas desde la computadora del equipo y desde navegadores.</p>
+        <div class="sv-wrapx"><table class="sv-table" data-source="entornos" data-row-key="entorno"><thead><tr><th data-field="entorno">Entorno</th><th data-field="sesiones">Sesiones</th><th data-field="con_accion">Con acción</th><th data-field="victorias">Victorias</th></tr></thead><tbody data-draw="tb"></tbody></table></div>
+      </div>
+      <div class="sv-card">
+        <h3>Señales de fricción</h3>
+        <p class="sv-note">Eventos que sugieren duda, espera o abandono.</p>
+        <div class="sv-wrapx"><table class="sv-table" data-source="eventos" data-row-key="evento"><thead><tr><th data-field="etiqueta">Señal</th><th data-field="total">Veces</th><th data-field="sesiones">En sesiones</th></tr></thead><tbody data-draw="tb"></tbody></table></div>
+      </div>
+    </div>
+    <p class="sv-read">La mayor pérdida está en el inicio: <b data-draw="v" data-source="kpis" data-row="0" data-field="sin_accion" data-fmt="int">—</b> partidas se pierden antes de la primera acción, y la primera sección acumula <b data-draw="v" data-source="kpis" data-row="0" data-field="descansos_inicio" data-fmt="int">—</b> eventos de descanso. Después la curva es casi plana. Los reinicios no apuntan a confusión: <b data-draw="v" data-source="kpis" data-row="0" data-field="reinicios_9" data-fmt="int">—</b> de <b data-draw="v" data-source="kpis" data-row="0" data-field="reinicios_total" data-fmt="int">—</b> ocurren en la última sección, cuando el jugador quiere repetir. En navegador, <b data-draw="v" data-source="kpis" data-row="0" data-field="web_accion" data-fmt="int">—</b> de <b data-draw="v" data-source="kpis" data-row="0" data-field="web_ses" data-fmt="int">—</b> sesiones tuvieron acción, y en Safari ninguna de las <b data-draw="v" data-source="kpis" data-row="0" data-field="safari_ses" data-fmt="int">—</b>. Además, <b data-draw="v" data-source="kpis" data-row="0" data-field="sin_cierre" data-fmt="int">—</b> partidas terminaron sin pantalla final.</p>
+    <p class="sv-decision"><b>Decisión de diseño.</b> Avisar en el menú web que se juega con teclado en computadora y mostrar la tecla de salto después de unos segundos sin movimiento.</p>
+  </section>
+
+  <section class="sv-q" id="p4">
+    <p class="sv-qtag">Pregunta 4</p>
+    <h2>¿El prototipo cumple la experiencia que se busca?</h2>
+    <p class="sv-read">La experiencia buscada es una aventura ágil y juguetona: un nivel corto de plataformas con dificultad creciente, recompensas por explorar (las letras S-U-R-I-E) y un nivel secreto, la alacena, para quien las reúne.</p>
+    <dl class="sv-metrics">
+      <div><dt>M14 · Duración de una victoria</dt><dd>Segundos de principio a fin en las partidas ganadas.</dd></div>
+      <div><dt>M15 · Letras reunidas</dt><dd>Victorias con las cinco letras, necesarias para la alacena.</dd></div>
+      <div><dt>M17 · Alacena</dt><dd>Entradas, finalizaciones, duración y golpes del nivel secreto.</dd></div>
+      <div><dt>M16 · Perfil de una victoria</dt><dd>Saltos, dashes, caídas, golpes de estrés y croquetas promedio por victoria.</dd></div>
+      <div><dt>M18 · Puntaje final de la alacena</dt><dd>Puntos al llegar al frasco: media, mejor y peor intento.</dd></div>
+      <div><dt>M19 · Croquetas de la alacena</dt><dd>Croquetas recogidas de las disponibles en el nivel secreto.</dd></div>
+    </dl>
+    <div class="sv-grid">
+      <div class="sv-card">
+        <h3>Duración de las victorias</h3>
+        <p class="sv-note">Partidas ganadas por rango de tiempo.</p>
+        <div class="sv-chart" data-draw="hist" data-source="hist_vic"></div>
+      </div>
+      <div class="sv-card">
+        <h3>Intentos en la alacena</h3>
+        <p class="sv-note">La barra ocupa el tiempo disponible; las barras vacías son entradas que se cerraron al instante.</p>
+        <div class="sv-chart" data-draw="bonus" data-source="bonus kpis"></div>
+      </div>
+    </div>
+    <div class="sv-grid">
+      <div class="sv-card">
+        <h3>Puntaje final de la alacena</h3>
+        <p class="sv-note">Puntos al llegar al frasco en cada intento completado, con los golpes recibidos.</p>
+        <div class="sv-chart" data-draw="pts" data-source="bonus"></div>
+      </div>
+      <div class="sv-card">
+        <h3>Perfil de una victoria típica</h3>
+        <p class="sv-note">Promedio por victoria en el nivel principal.</p>
+        <div class="sv-chart" data-draw="perfil" data-source="kpis"></div>
+      </div>
+    </div>
+    <p class="sv-read">La mitad de las victorias dura menos de <b data-draw="v" data-source="kpis" data-row="0" data-field="mediana_vic" data-fmt="s">—</b>. <b data-draw="v" data-source="kpis" data-row="0" data-field="pct_letras5" data-fmt="pct">—</b> de ellas reunieron las cinco letras, así que el coleccionable se descubre. La alacena se activó <b data-draw="v" data-source="kpis" data-row="0" data-field="bonus_intentos" data-fmt="int">—</b> veces, equivalentes a <b data-draw="v" data-source="kpis" data-row="0" data-field="bonus_de_victorias" data-fmt="pct">—</b> de las victorias terminadas. En <b data-draw="v" data-source="kpis" data-row="0" data-field="bonus_inst" data-fmt="int">—</b> de ellas se cerró al instante por un error que ya se corrigió. Las <b data-draw="v" data-source="kpis" data-row="0" data-field="bonus_comp" data-fmt="int">—</b> siguientes la terminaron en <b data-draw="v" data-source="kpis" data-row="0" data-field="bonus_dur_media" data-fmt="s">—</b> de los <b data-draw="v" data-source="kpis" data-row="0" data-field="bonus_limite" data-fmt="int">—</b> segundos disponibles, con <b data-draw="v" data-source="kpis" data-row="0" data-field="bonus_golpes_media" data-fmt="dec">—</b> golpes de media. Queda corta y fácil. El puntaje final promedia <b data-draw="v" data-source="kpis" data-row="0" data-field="bonus_pts_media" data-fmt="int">—</b> puntos, entre <b data-draw="v" data-source="kpis" data-row="0" data-field="bonus_pts_min" data-fmt="int">—</b> y <b data-draw="v" data-source="kpis" data-row="0" data-field="bonus_pts_max" data-fmt="int">—</b>. El intento con menos golpes (<b data-draw="v" data-source="kpis" data-row="0" data-field="golpes_min" data-fmt="int">—</b>) sumó <b data-draw="v" data-source="kpis" data-row="0" data-field="pts_menos_golpes" data-fmt="int">—</b> puntos y el de más golpes (<b data-draw="v" data-source="kpis" data-row="0" data-field="golpes_max" data-fmt="int">—</b>) sumó <b data-draw="v" data-source="kpis" data-row="0" data-field="pts_mas_golpes" data-fmt="int">—</b>. En promedio se recogieron <b data-draw="v" data-source="kpis" data-row="0" data-field="bonus_croq_media" data-fmt="dec">—</b> de las <b data-draw="v" data-source="kpis" data-row="0" data-field="bonus_croq_total" data-fmt="int">—</b> croquetas disponibles, así que nadie dejó nada atrás. Una victoria típica pide <b data-draw="v" data-source="kpis" data-row="0" data-field="saltos_vic" data-fmt="dec">—</b> saltos y <b data-draw="v" data-source="kpis" data-row="0" data-field="dashes_vic" data-fmt="dec">—</b> dashes, con <b data-draw="v" data-source="kpis" data-row="0" data-field="estres_vic" data-fmt="dec">—</b> golpes de estrés.</p>
+    <p class="sv-decision"><b>Decisión de diseño.</b> Alargar la alacena y sumar obstáculos para que use el tiempo disponible. Si se quiere más de un minuto de juego, hay que ampliar el nivel principal.</p>
+  </section>
+
+  <details>
+    <summary>Cómo leer estas métricas y sus límites</summary>
+    <ul>
+      <li>Origen: el juego envía una fila por sesión y un evento por cada acción relevante a una base de datos. Estas tablas son un corte de esa base, con los nombres de jugador retirados.</li>
+      <li>Partida abierta es cada inicio de nivel. Sesión cerrada es la que registra un resultado: victoria, derrota o abandono.</li>
+      <li>La muestra son compañeros y el equipo, casi todos en la computadora del equipo y pocos desde el navegador. Con tan pocas sesiones, los porcentajes orientan decisiones pero no son estadística concluyente.</li>
+      <li>Los descansos del inicio cuentan los momentos en que Surie se queda quieta en la cama de arranque. Los usamos como señal de espera, no como error.</li>
+      <li>Las tablas están fijas al corte y no se actualizan solas.</li>
+    </ul>
+  </details>
+
+  <details>
+    <summary>Datos de cada sesión cerrada</summary>
+    <div class="sv-box" style="margin-top:10px"><table class="sv-table" data-source="sesiones" data-row-key="n"><thead><tr><th data-field="n">Sesión</th><th data-field="fecha">Fecha</th><th data-field="resultado">Resultado</th><th data-field="duracion_s">Duración (s)</th><th data-field="max_seccion">Sección máx.</th><th data-field="saltos">Saltos</th><th data-field="dashes">Dashes</th><th data-field="caidas">Caídas</th><th data-field="estres">Estrés</th><th data-field="letras">Letras</th><th data-field="croquetas">Croquetas</th></tr></thead><tbody data-draw="tb"></tbody></table></div>
+  </details>
+</div>
+
+
+
+
+
+</div>
+<script>
+const DATA = {"embudo": [{"paso": "Abrieron el juego", "orden": 1, "sesiones": 55}, {"paso": "Hicieron una primera acción", "orden": 2, "sesiones": 43}, {"paso": "Usaron el dash", "orden": 3, "sesiones": 35}, {"paso": "Llegaron a la última sección", "orden": 4, "sesiones": 29}, {"paso": "Terminaron el nivel", "orden": 5, "sesiones": 28}], "secciones": [{"seccion": 1, "nombre": "Inicio", "llegan": 55, "saltos": 208, "dashes": 16, "golpes_roomba": 0, "golpes_jarron": 0, "golpes_agua": 0, "golpes_caida": 0, "golpes_tv": 0, "estres": 0, "caidas": 0, "pausas": 8, "reinicios": 3, "al_menu": 6}, {"seccion": 2, "nombre": "Desarrollo", "llegan": 39, "saltos": 240, "dashes": 29, "golpes_roomba": 0, "golpes_jarron": 26, "golpes_agua": 19, "golpes_caida": 0, "golpes_tv": 0, "estres": 45, "caidas": 0, "pausas": 2, "reinicios": 1, "al_menu": 1}, {"seccion": 3, "nombre": "Variación", "llegan": 37, "saltos": 168, "dashes": 25, "golpes_roomba": 45, "golpes_jarron": 6, "golpes_agua": 0, "golpes_caida": 0, "golpes_tv": 0, "estres": 51, "caidas": 0, "pausas": 0, "reinicios": 0, "al_menu": 0}, {"seccion": 4, "nombre": "Complicación", "llegan": 37, "saltos": 98, "dashes": 3, "golpes_roomba": 0, "golpes_jarron": 0, "golpes_agua": 0, "golpes_caida": 0, "golpes_tv": 0, "estres": 0, "caidas": 0, "pausas": 0, "reinicios": 0, "al_menu": 0}, {"seccion": 5, "nombre": "Foso", "llegan": 35, "saltos": 64, "dashes": 4, "golpes_roomba": 0, "golpes_jarron": 0, "golpes_agua": 0, "golpes_caida": 2, "golpes_tv": 0, "estres": 2, "caidas": 2, "pausas": 0, "reinicios": 0, "al_menu": 0}, {"seccion": 6, "nombre": "Cojines", "llegan": 34, "saltos": 54, "dashes": 36, "golpes_roomba": 0, "golpes_jarron": 0, "golpes_agua": 0, "golpes_caida": 14, "golpes_tv": 0, "estres": 14, "caidas": 14, "pausas": 2, "reinicios": 0, "al_menu": 1}, {"seccion": 7, "nombre": "Estantes", "llegan": 31, "saltos": 81, "dashes": 21, "golpes_roomba": 23, "golpes_jarron": 0, "golpes_agua": 0, "golpes_caida": 0, "golpes_tv": 0, "estres": 23, "caidas": 0, "pausas": 0, "reinicios": 1, "al_menu": 0}, {"seccion": 8, "nombre": "Salto final", "llegan": 30, "saltos": 78, "dashes": 34, "golpes_roomba": 3, "golpes_jarron": 0, "golpes_agua": 0, "golpes_caida": 5, "golpes_tv": 0, "estres": 8, "caidas": 5, "pausas": 0, "reinicios": 0, "al_menu": 0}, {"seccion": 9, "nombre": "Cocina y TV", "llegan": 29, "saltos": 203, "dashes": 28, "golpes_roomba": 0, "golpes_jarron": 0, "golpes_agua": 0, "golpes_caida": 0, "golpes_tv": 5, "estres": 5, "caidas": 10, "pausas": 5, "reinicios": 13, "al_menu": 11}], "primera_accion": [{"medida": "salto", "rango": "Menos de 3 s", "orden": 1, "sesiones": 25}, {"medida": "salto", "rango": "3 a 10 s", "orden": 2, "sesiones": 10}, {"medida": "salto", "rango": "Más de 10 s", "orden": 3, "sesiones": 8}, {"medida": "salto", "rango": "Nunca saltó", "orden": 4, "sesiones": 12}, {"medida": "dash", "rango": "Menos de 10 s", "orden": 1, "sesiones": 14}, {"medida": "dash", "rango": "10 a 30 s", "orden": 2, "sesiones": 10}, {"medida": "dash", "rango": "Más de 30 s", "orden": 3, "sesiones": 11}, {"medida": "dash", "rango": "Nunca lo usó", "orden": 4, "sesiones": 8}], "entornos": [{"entorno": "Computadora del equipo (Unity)", "sesiones": 46, "con_accion": 39, "victorias": 25}, {"entorno": "Navegador Chrome (web)", "sesiones": 7, "con_accion": 4, "victorias": 3}, {"entorno": "Navegador Safari (web)", "sesiones": 2, "con_accion": 0, "victorias": 0}], "bonus": [{"intento": 1, "version": "Antes del arreglo", "duracion_s": 0, "puntos": 0, "croquetas": 0, "golpes": 0, "completo": false}, {"intento": 2, "version": "Antes del arreglo", "duracion_s": 0, "puntos": 0, "croquetas": 0, "golpes": 0, "completo": false}, {"intento": 3, "version": "Antes del arreglo", "duracion_s": 0, "puntos": 0, "croquetas": 0, "golpes": 0, "completo": false}, {"intento": 4, "version": "Antes del arreglo", "duracion_s": 0, "puntos": 0, "croquetas": 0, "golpes": 0, "completo": false}, {"intento": 5, "version": "Antes del arreglo", "duracion_s": 0, "puntos": 0, "croquetas": 0, "golpes": 0, "completo": false}, {"intento": 6, "version": "Antes del arreglo", "duracion_s": 0, "puntos": 0, "croquetas": 0, "golpes": 0, "completo": false}, {"intento": 7, "version": "Antes del arreglo", "duracion_s": 0, "puntos": 0, "croquetas": 0, "golpes": 0, "completo": false}, {"intento": 8, "version": "Después del arreglo", "duracion_s": 23.2, "puntos": 1730, "croquetas": 15, "golpes": 6, "completo": true}, {"intento": 9, "version": "Después del arreglo", "duracion_s": 20.9, "puntos": 2010, "croquetas": 15, "golpes": 1, "completo": true}, {"intento": 10, "version": "Después del arreglo", "duracion_s": 18.3, "puntos": 1930, "croquetas": 15, "golpes": 3, "completo": true}, {"intento": 11, "version": "Después del arreglo", "duracion_s": 30.4, "puntos": 1810, "croquetas": 15, "golpes": 3, "completo": true}, {"intento": 12, "version": "Después del arreglo", "duracion_s": 13.0, "puntos": 2090, "croquetas": 15, "golpes": 3, "completo": true}, {"intento": 13, "version": "Después del arreglo", "duracion_s": 15.6, "puntos": 2110, "croquetas": 15, "golpes": 0, "completo": true}], "eventos": [{"evento": "pausas", "etiqueta": "Pausas", "total": 17, "sesiones": 15}, {"evento": "reinicios", "etiqueta": "Reinicios", "total": 18, "sesiones": 18}, {"evento": "al_menu", "etiqueta": "Volver al menú", "total": 19, "sesiones": 19}, {"evento": "descansos", "etiqueta": "Descansos en el inicio", "total": 433, "sesiones": 29}, {"evento": "dash_sin_energia", "etiqueta": "Dash sin energía", "total": 8, "sesiones": 5}, {"evento": "perdidas_vida", "etiqueta": "Vidas perdidas por estrés", "total": 15, "sesiones": 10}, {"evento": "sin_cierre", "etiqueta": "Sesiones sin cierre", "total": 18, "sesiones": 18}], "sesiones": [{"n": 1, "fecha": "2026-10-27", "resultado": "abandono", "duracion_s": 2019.84, "max_seccion": 1, "saltos": 1, "dashes": 0, "caidas": 0, "estres": 0, "letras": 0, "croquetas": 0, "descansos": 4}, {"n": 2, "fecha": "2026-10-27", "resultado": "victoria", "duracion_s": 299.26, "max_seccion": 9, "saltos": 62, "dashes": 17, "caidas": 7, "estres": 11, "letras": 5, "croquetas": 7, "descansos": 0}, {"n": 3, "fecha": "2026-10-27", "resultado": "abandono", "duracion_s": 352.35, "max_seccion": 9, "saltos": 31, "dashes": 11, "caidas": 3, "estres": 8, "letras": 3, "croquetas": 7, "descansos": 0}, {"n": 4, "fecha": "2026-10-27", "resultado": "abandono", "duracion_s": 408.05, "max_seccion": 1, "saltos": 0, "dashes": 0, "caidas": 0, "estres": 0, "letras": 0, "croquetas": 0, "descansos": 36}, {"n": 5, "fecha": "2026-10-27", "resultado": "victoria", "duracion_s": 83.44, "max_seccion": 9, "saltos": 31, "dashes": 5, "caidas": 0, "estres": 4, "letras": 5, "croquetas": 7, "descansos": 0}, {"n": 6, "fecha": "2026-10-27", "resultado": "abandono", "duracion_s": 19.12, "max_seccion": 1, "saltos": 0, "dashes": 0, "caidas": 0, "estres": 0, "letras": 0, "croquetas": 0, "descansos": 1}, {"n": 7, "fecha": "2026-10-28", "resultado": "victoria", "duracion_s": 198.29, "max_seccion": 9, "saltos": 43, "dashes": 7, "caidas": 2, "estres": 10, "letras": 5, "croquetas": 7, "descansos": 10}, {"n": 8, "fecha": "2026-10-28", "resultado": "victoria", "duracion_s": 246.12, "max_seccion": 9, "saltos": 42, "dashes": 8, "caidas": 0, "estres": 6, "letras": 5, "croquetas": 7, "descansos": 80}, {"n": 9, "fecha": "2026-10-28", "resultado": "victoria", "duracion_s": 367.23, "max_seccion": 9, "saltos": 34, "dashes": 11, "caidas": 2, "estres": 8, "letras": 5, "croquetas": 7, "descansos": 3}, {"n": 10, "fecha": "2026-10-28", "resultado": "victoria", "duracion_s": 44.41, "max_seccion": 9, "saltos": 29, "dashes": 4, "caidas": 0, "estres": 2, "letras": 5, "croquetas": 7, "descansos": 0}, {"n": 11, "fecha": "2026-10-28", "resultado": "victoria", "duracion_s": 45.01, "max_seccion": 9, "saltos": 24, "dashes": 5, "caidas": 0, "estres": 2, "letras": 5, "croquetas": 7, "descansos": 3}, {"n": 12, "fecha": "2026-10-29", "resultado": "victoria", "duracion_s": 83.18, "max_seccion": 9, "saltos": 31, "dashes": 7, "caidas": 0, "estres": 2, "letras": 5, "croquetas": 7, "descansos": 4}, {"n": 13, "fecha": "2026-10-29", "resultado": "victoria", "duracion_s": 50.56, "max_seccion": 9, "saltos": 25, "dashes": 4, "caidas": 1, "estres": 4, "letras": 5, "croquetas": 7, "descansos": 0}, {"n": 14, "fecha": "2026-10-29", "resultado": "victoria", "duracion_s": 71.12, "max_seccion": 9, "saltos": 32, "dashes": 3, "caidas": 1, "estres": 3, "letras": 5, "croquetas": 8, "descansos": 0}, {"n": 15, "fecha": "2026-10-29", "resultado": "victoria", "duracion_s": 47.58, "max_seccion": 9, "saltos": 25, "dashes": 3, "caidas": 1, "estres": 3, "letras": 5, "croquetas": 7, "descansos": 1}, {"n": 16, "fecha": "2026-10-29", "resultado": "derrota", "duracion_s": 71.02, "max_seccion": 7, "saltos": 48, "dashes": 1, "caidas": 6, "estres": 15, "letras": 4, "croquetas": 6, "descansos": 0}, {"n": 17, "fecha": "2026-10-29", "resultado": "victoria", "duracion_s": 134.21, "max_seccion": 9, "saltos": 19, "dashes": 3, "caidas": 0, "estres": 1, "letras": 5, "croquetas": 7, "descansos": 3}, {"n": 18, "fecha": "2026-10-29", "resultado": "victoria", "duracion_s": 39.14, "max_seccion": 9, "saltos": 26, "dashes": 3, "caidas": 1, "estres": 3, "letras": 5, "croquetas": 7, "descansos": 0}, {"n": 19, "fecha": "2026-10-29", "resultado": "victoria", "duracion_s": 54, "max_seccion": 9, "saltos": 30, "dashes": 4, "caidas": 2, "estres": 4, "letras": 5, "croquetas": 7, "descansos": 0}, {"n": 20, "fecha": "2026-10-29", "resultado": "victoria", "duracion_s": 43.85, "max_seccion": 9, "saltos": 18, "dashes": 6, "caidas": 0, "estres": 1, "letras": 5, "croquetas": 7, "descansos": 1}, {"n": 21, "fecha": "2026-10-29", "resultado": "victoria", "duracion_s": 62.97, "max_seccion": 9, "saltos": 41, "dashes": 9, "caidas": 4, "estres": 1, "letras": 5, "croquetas": 22, "descansos": 0}, {"n": 22, "fecha": "2026-10-29", "resultado": "victoria", "duracion_s": 21.76, "max_seccion": 9, "saltos": 17, "dashes": 6, "caidas": 0, "estres": 1, "letras": 4, "croquetas": 7, "descansos": 0}, {"n": 23, "fecha": "2026-10-29", "resultado": "victoria", "duracion_s": 51.29, "max_seccion": 9, "saltos": 34, "dashes": 5, "caidas": 0, "estres": 2, "letras": 5, "croquetas": 22, "descansos": 0}, {"n": 24, "fecha": "2026-10-29", "resultado": "abandono", "duracion_s": 16.48, "max_seccion": 1, "saltos": 0, "dashes": 0, "caidas": 0, "estres": 0, "letras": 0, "croquetas": 0, "descansos": 0}, {"n": 25, "fecha": "2026-10-29", "resultado": "victoria", "duracion_s": 101.24, "max_seccion": 9, "saltos": 28, "dashes": 8, "caidas": 0, "estres": 2, "letras": 5, "croquetas": 7, "descansos": 24}, {"n": 26, "fecha": "2026-10-29", "resultado": "victoria", "duracion_s": 51.82, "max_seccion": 9, "saltos": 42, "dashes": 9, "caidas": 2, "estres": 1, "letras": 5, "croquetas": 22, "descansos": 0}, {"n": 27, "fecha": "2026-10-29", "resultado": "abandono", "duracion_s": 168.04, "max_seccion": 6, "saltos": 49, "dashes": 0, "caidas": 7, "estres": 10, "letras": 3, "croquetas": 2, "descansos": 57}, {"n": 28, "fecha": "2026-10-29", "resultado": "victoria", "duracion_s": 121.96, "max_seccion": 9, "saltos": 38, "dashes": 4, "caidas": 3, "estres": 4, "letras": 5, "croquetas": 22, "descansos": 4}, {"n": 29, "fecha": "2026-11-02", "resultado": "victoria", "duracion_s": 48.58, "max_seccion": 9, "saltos": 34, "dashes": 9, "caidas": 2, "estres": 1, "letras": 5, "croquetas": 22, "descansos": 1}, {"n": 30, "fecha": "2026-11-02", "resultado": "abandono", "duracion_s": 417.79, "max_seccion": 4, "saltos": 24, "dashes": 1, "caidas": 0, "estres": 3, "letras": 4, "croquetas": 0, "descansos": 38}, {"n": 31, "fecha": "2026-11-02", "resultado": "abandono", "duracion_s": 22.04, "max_seccion": 2, "saltos": 11, "dashes": 0, "caidas": 0, "estres": 0, "letras": 2, "croquetas": 0, "descansos": 2}, {"n": 32, "fecha": "2026-11-02", "resultado": "abandono", "duracion_s": 104.94, "max_seccion": 6, "saltos": 14, "dashes": 3, "caidas": 0, "estres": 1, "letras": 4, "croquetas": 2, "descansos": 27}, {"n": 33, "fecha": "2026-11-02", "resultado": "abandono", "duracion_s": 13.74, "max_seccion": 2, "saltos": 4, "dashes": 0, "caidas": 0, "estres": 0, "letras": 1, "croquetas": 0, "descansos": 2}, {"n": 34, "fecha": "2026-11-02", "resultado": "abandono", "duracion_s": 125.14, "max_seccion": 1, "saltos": 5, "dashes": 0, "caidas": 0, "estres": 0, "letras": 1, "croquetas": 0, "descansos": 35}, {"n": 35, "fecha": "2026-11-02", "resultado": "abandono", "duracion_s": 107.11, "max_seccion": 1, "saltos": 6, "dashes": 0, "caidas": 0, "estres": 0, "letras": 1, "croquetas": 0, "descansos": 28}, {"n": 36, "fecha": "2026-11-04", "resultado": "victoria", "duracion_s": 35.95, "max_seccion": 9, "saltos": 27, "dashes": 7, "caidas": 1, "estres": 2, "letras": 5, "croquetas": 7, "descansos": 0}, {"n": 37, "fecha": "2026-11-04", "resultado": "victoria", "duracion_s": 355.26, "max_seccion": 9, "saltos": 36, "dashes": 4, "caidas": 0, "estres": 1, "letras": 5, "croquetas": 22, "descansos": 0}, {"n": 38, "fecha": "2026-11-04", "resultado": "victoria", "duracion_s": 28.81, "max_seccion": 9, "saltos": 33, "dashes": 5, "caidas": 1, "estres": 3, "letras": 4, "croquetas": 7, "descansos": 0}]};
+const __calcs = {}, __cache = {}, __draws = [];
+window.dash = {
+  colors: ['#3b6ea8', '#d0782f', '#3f9a78', '#9a5fb0', '#c4a020', '#4aa0c8', '#b0504a', '#7b8d3a'],
+  data(id) {
+    if (DATA[id]) return {status: 'ok', data: DATA[id]};
+    const c = __calcs[id];
+    if (!c) return {status: 'missing', data: []};
+    if (!__cache[id]) __cache[id] = c.fn(...c.inputs.map((i) => dash.data(i).data));
+    return {status: 'ok', data: __cache[id]};
+  },
+  calc(id, spec) { __calcs[id] = spec; },
+  draw(name, fn) { __draws.push([name, fn]); },
+  __run() { __draws.forEach(([n, f]) => document.querySelectorAll('[data-draw="' + n + '"]').forEach((el) => f(el))); }
+};
+</script>
+<script>
+window.sv = {};
+sv.NF = new Intl.NumberFormat('es-MX', {maximumFractionDigits: 0});
+sv.NF1 = new Intl.NumberFormat('es-MX', {maximumFractionDigits: 1});
+sv.PF = new Intl.NumberFormat('es-MX', {style: 'percent', maximumFractionDigits: 0});
+sv.fmt = (k, v) => {
+  if (v === null || v === undefined) return '—';
+  if (k === 'pct') return sv.PF.format(v);
+  if (k === 'dec') return sv.NF1.format(v);
+  if (k === 's') return sv.NF1.format(v) + ' s';
+  if (k === 'fecha') return new Date(v + 'T12:00:00').toLocaleDateString('es-MX', {day: 'numeric', month: 'long'});
+  if (k === 'int') return sv.NF.format(v);
+  return typeof v === 'number' ? sv.NF1.format(v) : String(v);
+};
+sv.h = (tag, cls, txt) => {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (txt !== undefined) e.textContent = txt;
+  return e;
+};
+sv.tip = (host) => {
+  const t = sv.h('div', 'sv-tip');
+  t.hidden = true;
+  host.appendChild(t);
+  return {
+    show: (txt, ev) => {
+      t.textContent = txt;
+      t.hidden = false;
+      const r = host.getBoundingClientRect();
+      const x = Math.max(4, Math.min(ev.clientX - r.left + 12, r.width - t.offsetWidth - 4));
+      t.style.left = x + 'px';
+      t.style.top = (ev.clientY - r.top + 14) + 'px';
+    },
+    hide: () => { t.hidden = true; }
+  };
+};
+sv.bind = (el, tip, txt) => {
+  el.addEventListener('pointermove', (ev) => tip.show(txt, ev));
+  el.addEventListener('pointerleave', () => tip.hide());
+};
+
+dash.calc('emb_calc', {
+  title: 'Embudo con porcentajes',
+  description: 'Cada paso como porcentaje de las partidas abiertas y pérdida frente al paso anterior.',
+  inputs: ['embudo'],
+  fn: (embudo) => {
+    const r = [...embudo].sort((a, b) => a.orden - b.orden);
+    const t = r[0].sesiones;
+    return r.map((x, i) => ({paso: x.paso, orden: x.orden, sesiones: x.sesiones, pct: x.sesiones / t, perdidas: i ? r[i - 1].sesiones - x.sesiones : 0}));
+  }
+});
+
+dash.calc('sec_calc', {
+  title: 'Secciones con pérdidas',
+  description: 'Eventos por sección más las partidas perdidas respecto a la sección anterior.',
+  inputs: ['secciones'],
+  fn: (secciones) => {
+    const r = [...secciones].sort((a, b) => a.seccion - b.seccion);
+    return r.map((x, i) => ({...x, perdidas: i ? r[i - 1].llegan - x.llegan : 0}));
+  }
+});
+
+dash.calc('acc_calc', {
+  title: 'Primera acción con porcentajes',
+  description: 'Cada rango de tiempo como porcentaje del total de su medida.',
+  inputs: ['primera_accion'],
+  fn: (primera_accion) => {
+    return [...primera_accion].sort((a, b) => a.orden - b.orden).map((x) => {
+      const total = primera_accion.filter((y) => y.medida === x.medida).reduce((a, y) => a + y.sesiones, 0);
+      return {medida: x.medida, rango: x.rango, orden: x.orden, sesiones: x.sesiones, pct: x.sesiones / total};
+    });
+  }
+});
+
+dash.calc('hist_vic', {
+  title: 'Duración de victorias por rango',
+  description: 'Victorias de la tabla de sesiones agrupadas en rangos de 30 segundos.',
+  inputs: ['sesiones'],
+  fn: (sesiones) => {
+    const PASO = 30, TOPE = 300;
+    const vic = sesiones.filter((r) => r.resultado === 'victoria');
+    const out = [];
+    for (let a = 0; a <= TOPE; a += PASO) {
+      const n = vic.filter((r) => (a === TOPE ? r.duracion_s >= a : r.duracion_s >= a && r.duracion_s < a + PASO)).length;
+      out.push({orden: a / PASO, rango: a === TOPE ? a + ' s o más' : a + ' a ' + (a + PASO) + ' s', n: n});
+    }
+    return out;
+  }
+});
+
+dash.calc('res_calc', {
+  title: 'Resultado de las sesiones',
+  description: 'Sesiones cerradas por resultado, con su porcentaje.',
+  inputs: ['sesiones'],
+  fn: (sesiones) => {
+    return ['victoria', 'abandono', 'derrota'].map((k, i) => {
+      const n = sesiones.filter((r) => r.resultado === k).length;
+      return {orden: i, resultado: k, n: n, pct: n / sesiones.length};
+    });
+  }
+});
+
+dash.calc('dia_calc', {
+  title: 'Sesiones por día de prueba',
+  description: 'Sesiones cerradas y victorias por fecha.',
+  inputs: ['sesiones'],
+  fn: (sesiones) => {
+    const fechas = [...new Set(sesiones.map((r) => r.fecha))].sort();
+    return fechas.map((f) => {
+      const dia = sesiones.filter((r) => r.fecha === f);
+      const v = dia.filter((r) => r.resultado === 'victoria').length;
+      return {fecha: f, sesiones: dia.length, victorias: v, pct: v / dia.length};
+    });
+  }
+});
+
+dash.calc('kpis', {
+  title: 'Indicadores derivados',
+  description: 'Porcentajes, promedios y medianas calculados desde las tablas de telemetría.',
+  inputs: ['embudo', 'secciones', 'primera_accion', 'sesiones', 'bonus', 'entornos', 'eventos'],
+  fn: (embudo, secciones, primera_accion, sesiones, bonus, entornos, eventos) => {
+    const UMBRAL_SALTO = 3, UMBRAL_DASH = 30, LIMITE_BONUS = 75;
+    const paso = (o) => embudo.find((r) => r.orden === o).sesiones;
+    const acc = (m, o) => primera_accion.find((r) => r.medida === m && r.orden === o).sesiones;
+    const sec = (n) => secciones.find((r) => r.seccion === n);
+    const suma = (k) => secciones.reduce((a, r) => a + r[k], 0);
+    const ev = (k) => eventos.find((r) => r.evento === k);
+    const media = (a) => a.reduce((x, y) => x + y, 0) / a.length;
+    const inicios = paso(1), activos = paso(2), ganaron = paso(5);
+    const estres = suma('estres');
+    const vic = sesiones.filter((r) => r.resultado === 'victoria');
+    const dv = vic.map((r) => r.duracion_s).sort((a, b) => a - b);
+    const med = dv.length % 2 ? dv[(dv.length - 1) / 2] : (dv[dv.length / 2 - 1] + dv[dv.length / 2]) / 2;
+    const comp = bonus.filter((r) => r.completo);
+    const web = entornos.filter((r) => r.entorno.indexOf('(web)') >= 0);
+    const safari = entornos.find((r) => r.entorno.indexOf('Safari') >= 0);
+    const fechas = sesiones.map((r) => r.fecha).sort();
+    const tarde = acc('dash', 3) + acc('dash', 4);
+    const BONUS_CROQ = 15;
+    const aband = sesiones.filter((r) => r.resultado === 'abandono');
+    const mediana = (a) => { const s = [...a].sort((x, y) => x - y); return s.length % 2 ? s[(s.length - 1) / 2] : (s[s.length / 2 - 1] + s[s.length / 2]) / 2; };
+    const mv = (k) => media(vic.map((r) => r[k]));
+    const gMin = Math.min(...comp.map((r) => r.golpes)), gMax = Math.max(...comp.map((r) => r.golpes));
+    const pts = comp.map((r) => r.puntos);
+    return [{
+      inicios: inicios, activos: activos, sin_accion: inicios - activos,
+      pct_sin_accion: (inicios - activos) / inicios,
+      saltos_rapidos: acc('salto', 1), umbral_salto: UMBRAL_SALTO, umbral_dash: UMBRAL_DASH,
+      dash_tarde: tarde, pct_dash_tarde: tarde / activos,
+      ganaron: ganaron, pct_ganan_activos: ganaron / activos,
+      estres_total: estres,
+      pct_estres_s23: (sec(2).estres + sec(3).estres) / estres,
+      pct_roomba: suma('golpes_roomba') / estres,
+      caidas_total: suma('caidas'), caidas_cojines: sec(6).caidas,
+      perdidas_vida: ev('perdidas_vida').total, sesiones_perdieron: ev('perdidas_vida').sesiones,
+      derrotas: sesiones.filter((r) => r.resultado === 'derrota').length,
+      n_ses: sesiones.length, mediana_vic: med,
+      pct_letras5: vic.filter((r) => r.letras >= 5).length / vic.length,
+      bonus_intentos: bonus.length, bonus_inst: bonus.filter((r) => !r.completo).length,
+      bonus_comp: comp.length, bonus_dur_media: media(comp.map((r) => r.duracion_s)),
+      bonus_limite: LIMITE_BONUS, bonus_golpes_media: media(comp.map((r) => r.golpes)),
+      bonus_de_victorias: bonus.length / ganaron,
+      web_ses: web.reduce((a, r) => a + r.sesiones, 0), web_accion: web.reduce((a, r) => a + r.con_accion, 0),
+      safari_ses: safari.sesiones, safari_accion: safari.con_accion,
+      descansos_inicio: ev('descansos').total,
+      reinicios_9: sec(9).reinicios, reinicios_total: suma('reinicios'),
+      sin_cierre: ev('sin_cierre').total,
+      n_vic: vic.length, n_aband: aband.length, pct_aband: aband.length / sesiones.length,
+      med_aband: mediana(aband.map((r) => r.duracion_s)),
+      desc_aband: media(aband.map((r) => r.descansos)), desc_vic: media(vic.map((r) => r.descansos)),
+      saltos_vic: mv('saltos'), dashes_vic: mv('dashes'), caidas_vic: mv('caidas'), estres_vic: mv('estres'), croq_vic: mv('croquetas'),
+      bonus_pts_media: media(pts), bonus_pts_min: Math.min(...pts), bonus_pts_max: Math.max(...pts),
+      bonus_croq_media: media(comp.map((r) => r.croquetas)), bonus_croq_total: BONUS_CROQ,
+      golpes_min: gMin, golpes_max: gMax,
+      pts_menos_golpes: comp.find((r) => r.golpes === gMin).puntos, pts_mas_golpes: comp.find((r) => r.golpes === gMax).puntos,
+      desde: fechas[0], hasta: fechas[fechas.length - 1]
+    }];
+  }
+});
+</script>
+<script>
+dash.draw('v', (el) => {
+  const d = dash.data(el.dataset.source);
+  const row = d.status === 'ok' ? d.data[+(el.dataset.row || 0)] : null;
+  el.textContent = row ? sv.fmt(el.dataset.fmt, row[el.dataset.field]) : '—';
+});
+
+dash.draw('acc', (host) => {
+  host.replaceChildren();
+  const d = dash.data('acc_calc');
+  if (d.status !== 'ok') { host.textContent = '—'; return; }
+  const rows = d.data.filter((r) => r.medida === host.dataset.medida);
+  const max = Math.max(...rows.map((r) => r.sesiones), 1);
+  const tip = sv.tip(host);
+  rows.forEach((r, i) => {
+    const last = i === rows.length - 1;
+    const row = sv.h('div', 'sv-row' + (last ? ' sv-hot' : ''));
+    row.appendChild(sv.h('span', 'sv-lab', r.rango));
+    const track = sv.h('div', 'sv-track');
+    const bar = sv.h('div', 'sv-bar');
+    bar.style.width = (r.sesiones / max * 100) + '%';
+    bar.style.background = last ? 'var(--cds-chart-status-critical)' : dash.colors[0];
+    track.appendChild(bar);
+    row.appendChild(track);
+    const val = sv.h('span', 'sv-val');
+    val.appendChild(sv.h('b', '', sv.NF.format(r.sesiones)));
+    val.appendChild(sv.h('i', '', sv.PF.format(r.pct)));
+    row.appendChild(val);
+    sv.bind(row, tip, r.rango + ': ' + sv.NF.format(r.sesiones) + ' partidas (' + sv.PF.format(r.pct) + ')');
+    host.appendChild(row);
+  });
+});
+
+dash.draw('emb', (host) => {
+  host.replaceChildren();
+  const d = dash.data('emb_calc');
+  if (d.status !== 'ok') { host.textContent = '—'; return; }
+  const maxLoss = Math.max(...d.data.map((r) => r.perdidas));
+  const tip = sv.tip(host);
+  d.data.forEach((r) => {
+    const hot = r.perdidas === maxLoss && maxLoss > 0;
+    const row = sv.h('div', 'sv-row' + (hot ? ' sv-hot' : ''));
+    row.appendChild(sv.h('span', 'sv-lab', r.paso));
+    const track = sv.h('div', 'sv-track');
+    const bar = sv.h('div', 'sv-bar');
+    bar.style.width = (r.pct * 100) + '%';
+    bar.style.background = dash.colors[0];
+    track.appendChild(bar);
+    row.appendChild(track);
+    const val = sv.h('span', 'sv-val');
+    val.appendChild(sv.h('b', '', sv.NF.format(r.sesiones)));
+    if (r.perdidas > 0) val.appendChild(sv.h('i', 'sv-loss', '−' + sv.NF.format(r.perdidas)));
+    row.appendChild(val);
+    sv.bind(row, tip, r.paso + ': ' + sv.NF.format(r.sesiones) + ' partidas (' + sv.PF.format(r.pct) + ' de las abiertas)');
+    host.appendChild(row);
+  });
+});
+
+dash.draw('sec', (host) => {
+  host.replaceChildren();
+  const d = dash.data('sec_calc');
+  if (d.status !== 'ok') { host.textContent = '—'; return; }
+  const max = Math.max(...d.data.map((r) => r.llegan), 1);
+  const maxLoss = Math.max(...d.data.map((r) => r.perdidas));
+  const tip = sv.tip(host);
+  d.data.forEach((r) => {
+    const hot = r.perdidas === maxLoss && maxLoss > 0;
+    const row = sv.h('div', 'sv-row' + (hot ? ' sv-hot' : ''));
+    row.appendChild(sv.h('span', 'sv-lab', r.seccion + ' · ' + r.nombre));
+    const track = sv.h('div', 'sv-track');
+    const bar = sv.h('div', 'sv-bar');
+    bar.style.width = (r.llegan / max * 100) + '%';
+    bar.style.background = hot ? 'var(--cds-chart-status-critical)' : dash.colors[0];
+    track.appendChild(bar);
+    row.appendChild(track);
+    const val = sv.h('span', 'sv-val');
+    val.appendChild(sv.h('b', '', sv.NF.format(r.llegan)));
+    if (r.perdidas > 0) val.appendChild(sv.h('i', 'sv-loss', '−' + sv.NF.format(r.perdidas)));
+    row.appendChild(val);
+    sv.bind(row, tip, r.seccion + ' · ' + r.nombre + ': llegan ' + sv.NF.format(r.llegan) + ' partidas');
+    host.appendChild(row);
+  });
+});
+
+dash.draw('estres', (host) => {
+  host.replaceChildren();
+  const d = dash.data('sec_calc');
+  if (d.status !== 'ok') { host.textContent = '—'; return; }
+  const causas = [['golpes_roomba', 'Roomba'], ['golpes_jarron', 'Jarrón'], ['golpes_agua', 'Agua'], ['golpes_caida', 'Caída'], ['golpes_tv', 'Ruido de la TV']];
+  const max = Math.max(...d.data.map((r) => r.estres), 1);
+  const legend = sv.h('div', 'sv-legend');
+  causas.forEach((c, i) => {
+    const s = sv.h('span');
+    const sw = sv.h('em');
+    sw.style.background = dash.colors[i];
+    s.appendChild(sw);
+    s.appendChild(document.createTextNode(c[1]));
+    legend.appendChild(s);
+  });
+  host.appendChild(legend);
+  const tip = sv.tip(host);
+  d.data.forEach((r) => {
+    const row = sv.h('div', 'sv-row');
+    row.appendChild(sv.h('span', 'sv-lab', r.seccion + ' · ' + r.nombre));
+    const track = sv.h('div', 'sv-track');
+    causas.forEach((c, i) => {
+      if (!r[c[0]]) return;
+      const seg = sv.h('div', 'sv-seg');
+      seg.style.width = (r[c[0]] / max * 100) + '%';
+      seg.style.background = dash.colors[i];
+      sv.bind(seg, tip, r.nombre + ' · ' + c[1] + ': ' + sv.NF.format(r[c[0]]) + ' golpes');
+      track.appendChild(seg);
+    });
+    row.appendChild(track);
+    const val = sv.h('span', 'sv-val');
+    val.appendChild(sv.h('b', '', sv.NF.format(r.estres)));
+    row.appendChild(val);
+    host.appendChild(row);
+  });
+});
+
+dash.draw('hist', (host) => {
+  host.replaceChildren();
+  const d = dash.data('hist_vic');
+  if (d.status !== 'ok') { host.textContent = '—'; return; }
+  const max = Math.max(...d.data.map((r) => r.n), 1);
+  const tip = sv.tip(host);
+  d.data.forEach((r) => {
+    const row = sv.h('div', 'sv-row');
+    row.appendChild(sv.h('span', 'sv-lab', r.rango));
+    const track = sv.h('div', 'sv-track');
+    const bar = sv.h('div', 'sv-bar');
+    bar.style.width = (r.n / max * 100) + '%';
+    bar.style.background = dash.colors[0];
+    track.appendChild(bar);
+    row.appendChild(track);
+    const val = sv.h('span', 'sv-val');
+    val.appendChild(sv.h('b', '', sv.NF.format(r.n)));
+    row.appendChild(val);
+    sv.bind(row, tip, r.rango + ': ' + sv.NF.format(r.n) + ' victorias');
+    host.appendChild(row);
+  });
+});
+
+dash.draw('bonus', (host) => {
+  host.replaceChildren();
+  const d = dash.data('bonus');
+  const k = dash.data('kpis');
+  if (d.status !== 'ok' || k.status !== 'ok') { host.textContent = '—'; return; }
+  const lim = k.data[0].bonus_limite;
+  const tip = sv.tip(host);
+  let prev = null;
+  d.data.forEach((r) => {
+    const row = sv.h('div', 'sv-row' + (r.completo ? '' : ' sv-hot') + (prev !== null && prev !== r.version ? ' sv-split' : ''));
+    prev = r.version;
+    const lab = sv.h('span', 'sv-lab', 'Intento ' + r.intento);
+    lab.appendChild(sv.h('small', '', r.version));
+    row.appendChild(lab);
+    const track = sv.h('div', 'sv-track');
+    if (r.completo) {
+      const bar = sv.h('div', 'sv-bar');
+      bar.style.width = Math.min(100, r.duracion_s / lim * 100) + '%';
+      bar.style.background = dash.colors[1];
+      track.appendChild(bar);
+    }
+    row.appendChild(track);
+    const val = sv.h('span', 'sv-val');
+    if (r.completo) {
+      val.appendChild(sv.h('b', '', sv.NF1.format(r.duracion_s) + ' s'));
+      val.appendChild(sv.h('i', '', sv.NF.format(r.puntos) + ' pts · ' + r.golpes + ' golpes'));
+    } else {
+      val.appendChild(sv.h('b', '', 'Cierre inmediato'));
+    }
+    row.appendChild(val);
+    sv.bind(row, tip, r.completo ? 'Intento ' + r.intento + ': ' + sv.NF1.format(r.duracion_s) + ' s, ' + sv.NF.format(r.puntos) + ' puntos, ' + r.croquetas + ' croquetas' : 'Intento ' + r.intento + ': el nivel terminó al entrar');
+    host.appendChild(row);
+  });
+});
+
+dash.draw('res', (host) => {
+  host.replaceChildren();
+  const d = dash.data('res_calc');
+  if (d.status !== 'ok') { host.textContent = '—'; return; }
+  const names = {victoria: 'Victoria', abandono: 'Abandono', derrota: 'Derrota'};
+  const cols = [dash.colors[2], 'var(--cds-chart-status-critical)', dash.colors[1]];
+  const max = Math.max(...d.data.map((r) => r.n), 1);
+  const tip = sv.tip(host);
+  d.data.forEach((r, i) => {
+    const row = sv.h('div', 'sv-row');
+    row.appendChild(sv.h('span', 'sv-lab', names[r.resultado]));
+    const track = sv.h('div', 'sv-track');
+    const bar = sv.h('div', 'sv-bar');
+    bar.style.width = (r.n / max * 100) + '%';
+    bar.style.background = cols[i];
+    track.appendChild(bar);
+    row.appendChild(track);
+    const val = sv.h('span', 'sv-val');
+    val.appendChild(sv.h('b', '', sv.NF.format(r.n)));
+    val.appendChild(sv.h('i', '', sv.PF.format(r.pct)));
+    row.appendChild(val);
+    sv.bind(row, tip, names[r.resultado] + ': ' + sv.NF.format(r.n) + ' sesiones (' + sv.PF.format(r.pct) + ')');
+    host.appendChild(row);
+  });
+});
+
+dash.draw('dia', (host) => {
+  host.replaceChildren();
+  const d = dash.data('dia_calc');
+  if (d.status !== 'ok') { host.textContent = '—'; return; }
+  const max = Math.max(...d.data.map((r) => r.sesiones), 1);
+  const tip = sv.tip(host);
+  d.data.forEach((r) => {
+    const row = sv.h('div', 'sv-row');
+    row.appendChild(sv.h('span', 'sv-lab', sv.fmt('fecha', r.fecha)));
+    const track = sv.h('div', 'sv-track');
+    const win = sv.h('div', 'sv-seg');
+    win.style.width = (r.victorias / max * 100) + '%';
+    win.style.background = dash.colors[2];
+    const rest = sv.h('div', 'sv-seg');
+    rest.style.width = ((r.sesiones - r.victorias) / max * 100) + '%';
+    rest.style.background = 'var(--cds-chart-muted)';
+    track.appendChild(win);
+    track.appendChild(rest);
+    row.appendChild(track);
+    const val = sv.h('span', 'sv-val');
+    val.appendChild(sv.h('b', '', r.victorias + ' de ' + r.sesiones));
+    val.appendChild(sv.h('i', '', sv.PF.format(r.pct)));
+    row.appendChild(val);
+    sv.bind(row, tip, sv.fmt('fecha', r.fecha) + ': ' + r.victorias + ' victorias en ' + r.sesiones + ' sesiones');
+    host.appendChild(row);
+  });
+});
+
+dash.draw('pts', (host) => {
+  host.replaceChildren();
+  const d = dash.data('bonus');
+  if (d.status !== 'ok') { host.textContent = '—'; return; }
+  const rows = d.data.filter((r) => r.completo);
+  const max = Math.max(...rows.map((r) => r.puntos), 1);
+  const tip = sv.tip(host);
+  rows.forEach((r) => {
+    const row = sv.h('div', 'sv-row');
+    row.appendChild(sv.h('span', 'sv-lab', 'Intento ' + r.intento));
+    const track = sv.h('div', 'sv-track');
+    const bar = sv.h('div', 'sv-bar');
+    bar.style.width = (r.puntos / max * 100) + '%';
+    bar.style.background = dash.colors[1];
+    track.appendChild(bar);
+    row.appendChild(track);
+    const val = sv.h('span', 'sv-val');
+    val.appendChild(sv.h('b', '', sv.NF.format(r.puntos)));
+    val.appendChild(sv.h('i', '', r.golpes + ' golpes'));
+    row.appendChild(val);
+    sv.bind(row, tip, 'Intento ' + r.intento + ': ' + sv.NF.format(r.puntos) + ' puntos, ' + r.golpes + ' golpes, ' + r.croquetas + ' croquetas');
+    host.appendChild(row);
+  });
+});
+
+dash.draw('perfil', (host) => {
+  host.replaceChildren();
+  const d = dash.data('kpis');
+  if (d.status !== 'ok') { host.textContent = '—'; return; }
+  const k = d.data[0];
+  [['Saltos', k.saltos_vic], ['Dashes', k.dashes_vic], ['Caídas', k.caidas_vic], ['Golpes de estrés', k.estres_vic], ['Croquetas', k.croq_vic]].forEach((p) => {
+    const row = sv.h('div', 'sv-stat');
+    row.appendChild(sv.h('span', '', p[0]));
+    row.appendChild(sv.h('b', '', sv.NF1.format(p[1])));
+    host.appendChild(row);
+  });
+});
+
+dash.draw('tb', (tbody) => {
+  tbody.replaceChildren();
+  const table = tbody.closest('table');
+  const d = dash.data(table.dataset.source);
+  if (d.status !== 'ok') return;
+  const cols = [...table.querySelectorAll('th')].map((th) => th.dataset.field);
+  d.data.forEach((r) => {
+    const tr = document.createElement('tr');
+    tr.dataset.key = r[table.dataset.rowKey];
+    cols.forEach((c) => {
+      const td = document.createElement('td');
+      td.textContent = c === 'fecha' ? sv.fmt('fecha', r[c]) : sv.fmt('', r[c]);
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+});
+</script>
+<script>dash.__run();</script>
+</body>
+</html>
