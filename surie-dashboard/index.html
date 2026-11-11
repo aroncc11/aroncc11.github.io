@@ -76,6 +76,16 @@ a{color:inherit}
   .sv-bar, .sv-seg { animation: sv-grow var(--cds-dur-slow) var(--cds-ease-out) both; transform-origin: left; }
   @keyframes sv-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 }
+
+#antes-despues .sv-grid{grid-template-columns:1fr}
+.va-bar{display:inline-block;height:8px;border-radius:4px;background:var(--cds-chart-status-critical);vertical-align:middle;margin-left:8px}
+.va-bar.ok{background:#3a7bd5}
+.va-delta{font-weight:600}.va-delta.good{color:#2e8b57}.va-delta.bad{color:var(--color-bad)}
+.va-empty{color:var(--color-fg-muted);font-size:var(--cds-font-size-caption);margin:6px 0 0}
+
+.va-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}
+.va-tab{font:inherit;cursor:pointer;border:1px solid var(--color-border-line);background:var(--color-panel);color:var(--color-fg);border-radius:999px;padding:6px 14px}
+.va-tab[aria-selected="true"]{background:#3a7bd5;border-color:#3a7bd5;color:#fff;font-weight:600}
 </style>
 </head>
 <body>
@@ -99,6 +109,31 @@ a{color:inherit}
     <div class="sv-tile"><span class="sv-tile-l">Mediana de una victoria</span><span class="sv-tile-v"><b data-draw="v" data-source="kpis" data-row="0" data-field="mediana_vic" data-fmt="s">—</b></span><span class="sv-tile-n">Tiempo de principio a fin</span></div>
     <div class="sv-tile"><span class="sv-tile-l">Estrés en las secciones 2 y 3</span><span class="sv-tile-v"><b data-draw="v" data-source="kpis" data-row="0" data-field="pct_estres_s23" data-fmt="pct">—</b></span><span class="sv-tile-n">De todos los golpes de estrés</span></div>
     <div class="sv-tile"><span class="sv-tile-l">Puntaje medio en la alacena</span><span class="sv-tile-v"><b data-draw="v" data-source="kpis" data-row="0" data-field="bonus_pts_media" data-fmt="int">—</b></span><span class="sv-tile-n">Puntos al llegar al frasco</span></div>
+  </section>
+
+
+  <section class="sv-q" id="antes-despues">
+    <p class="sv-qtag">Mejoras con métricas</p>
+    <h2>Antes y después: de 1 nivel a 6 niveles con minijuegos</h2>
+    <p class="sv-read">Comparamos la versión original (v2.0, solo el nivel de la sala) contra la versión mejorada (v5): más niveles, enemigos, jefe y minijuegos 3D. La meta es una partida de unos 30 minutos.</p>
+    <div class="va-tabs" role="tablist" id="va-tabs"></div>
+    <div id="va-general">
+    <div class="sv-grid">
+      <div class="sv-card"><h3>Antes vs. después</h3><p class="sv-note">Promedios por sesión o por jugador.</p><div class="sv-box"><table class="sv-table" id="va-comp"><thead><tr><th>Métrica</th><th>Antes (v2.0)</th><th>Después (v5)</th><th>Cambio</th></tr></thead><tbody></tbody></table></div></div>
+      <div class="sv-card"><h3>Dificultad por nivel</h3><p class="sv-note">Golpes de estrés por sesión, antes y después: dónde sufre el jugador.</p><div class="sv-box"><table class="sv-table" id="va-niv"><thead><tr><th>Nivel</th><th>Antes: sesiones</th><th>Antes: estrés/ses.</th><th>Después: sesiones</th><th>Después: estrés/ses.</th></tr></thead><tbody></tbody></table></div></div>
+    </div>
+    <div class="sv-grid">
+      <div class="sv-card"><h3>Minijuegos</h3><p class="sv-note">Puntajes promedio antes (versión 2D) y después (3D, con otra escala de puntos) y cuántos ganan la vida extra.</p><div class="sv-box"><table class="sv-table" id="va-mini"><thead><tr><th>Minijuego</th><th>Antes: partidas</th><th>Antes: promedio</th><th>Después: partidas</th><th>Después: promedio · premio</th></tr></thead><tbody></tbody></table></div></div>
+      <div class="sv-card"><h3>Jugadores con más tiempo (v5)</h3><p class="sv-note">Minutos totales jugados por jugador.</p><div class="sv-box"><table class="sv-table" id="va-top"><thead><tr><th>Jugador</th><th>Minutos</th><th>Sesiones</th><th>Terminó</th></tr></thead><tbody></tbody></table></div></div>
+    </div>
+    </div>
+    <div id="va-nivel" hidden>
+      <div class="sv-grid">
+        <div class="sv-card"><h3 id="va-nv-t">Nivel</h3><p class="sv-note">Promedios por sesión de este nivel, antes y después.</p><div class="sv-box"><table class="sv-table" id="va-nv-comp"><thead><tr><th>Métrica</th><th>Antes</th><th>Después</th><th>Cambio</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="sv-card"><h3>Por tramo del nivel</h3><p class="sv-note">Cuántas sesiones llegan a cada tramo y cuánto estrés reciben ahí.</p><div class="sv-box"><table class="sv-table" id="va-nv-tr"><thead><tr><th>Tramo</th><th>Antes: llegan</th><th>Antes: estrés</th><th>Después: llegan</th><th>Después: estrés</th></tr></thead><tbody></tbody></table></div></div>
+      </div>
+    </div>
+    <p class="va-empty" id="va-empty"></p>
   </section>
 
   <section class="sv-q" id="p1">
@@ -763,6 +798,98 @@ async function cargarEnVivo() {
 }
 cargarEnVivo();
 setInterval(cargarEnVivo, 60000);
+
+const NOMBRES_NIVEL = {1:'1 · La sala',2:'2 · La cocina',3:'3 · Baño y pasillo',4:'4 · El patio',5:'5 · El sótano',6:'6 · Cuarto de Benito'};
+const NOMBRES_MINI = {alacena:'La alacena',pescado:'Atrapa el pescado',luz:'Persigue la luz',mariposas:'Caza de mariposas',huellas:'Memoria de huellas'};
+function vaRows(id, rows) {
+  const tb = document.querySelector('#' + id + ' tbody'); tb.innerHTML = '';
+  rows.forEach((r) => { const tr = document.createElement('tr'); r.forEach((c) => { const td = document.createElement('td'); if (c instanceof Node) td.appendChild(c); else td.textContent = c; tr.appendChild(td); }); tb.appendChild(tr); });
+}
+function vaBar(v, max, ok) { const f = document.createDocumentFragment(); f.appendChild(document.createTextNode(String(v))); const b = document.createElement('span'); b.className = 'va-bar' + (ok ? ' ok' : ''); b.style.width = Math.max(2, Math.round(70 * v / (max || 1))) + 'px'; f.appendChild(b); return f; }
+async function cargarAntesDespues() {
+  try {
+    const r = await fetch(SB_URL + '/rest/v1/rpc/surie_dashboard_v5', {method: 'POST', headers: {apikey: SB_KEY, 'Content-Type': 'application/json'}, body: '{}'});
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    const a = d.comparacion.find((x) => x.clave === 'v2.0') || {};
+    const nuevas = d.comparacion.filter((x) => x.clave !== 'v2.0');
+    const b = nuevas[nuevas.length - 1] || null;
+    const fmt = (v) => (v === undefined || v === null) ? '—' : v;
+    const metr = [['Sesiones (cada nivel o minijuego cuenta una)','sesiones',0],['Jugadores distintos','jugadores',0],['Minutos jugados por jugador','min_por_jugador',1],['Minutos por sesión','min_por_sesion',1],['Victorias','victorias',1],['Golpes de estrés por sesión','estres_por_sesion',-1],['Saltos por sesión','saltos_por_sesion',1],['Dashes por sesión','dashes_por_sesion',1],['Caídas por sesión','caidas_por_sesion',-1]];
+    vaRows('va-comp', metr.map((m) => {
+      const x = a[m[1]], y = b ? b[m[1]] : null;
+      const dl = document.createElement('span');
+      if (x !== undefined && y !== null && y !== undefined && Number(x) !== 0) { const p = Math.round((y - x) / x * 100); dl.textContent = (p > 0 ? '+' : '') + p + '%'; dl.className = 'va-delta ' + (m[2] === 0 || p === 0 ? '' : ((p > 0) === (m[2] > 0) ? 'good' : 'bad')); } else dl.textContent = '—';
+      return [m[0], fmt(x), b ? fmt(y) : 'sin datos aún', dl];
+    }));
+    const per = (x, n) => +(x.estres / Math.max(1, x.sesiones)).toFixed(1);
+    const ant = d.niveles.filter((x) => x.version === 'v2.0'), des = d.niveles.filter((x) => x.version !== 'v2.0');
+    const maxE = Math.max(1, ...d.niveles.map((x) => x.estres / Math.max(1, x.sesiones)));
+    const rowsN = [];
+    for (let n = 1; n <= 6; n++) {
+      const p = ant.find((x) => x.nivel === n), q = des.filter((x) => x.nivel === n).reduce((acc, x) => ({sesiones: acc.sesiones + x.sesiones, estres: acc.estres + x.estres}), {sesiones: 0, estres: 0});
+      rowsN.push([NOMBRES_NIVEL[n], p ? p.sesiones : '—', p ? vaBar(per(p), maxE, true) : '—', q.sesiones || '—', q.sesiones ? vaBar(per(q), maxE, false) : '—']);
+    }
+    vaRows('va-niv', rowsN);
+    const juegos = [...new Set(d.minijuegos.map((x) => x.juego))];
+    vaRows('va-mini', juegos.map((j) => {
+      const p = d.minijuegos.find((x) => x.juego === j && x.version === 'v2.0'), q = d.minijuegos.find((x) => x.juego === j && x.version !== 'v2.0');
+      return [NOMBRES_MINI[j] || j, p ? p.partidas : '—', p ? p.promedio : '—', q ? q.partidas : '—', q ? q.promedio + ' · ' + q.con_premio + '/' + q.partidas + ' con premio' : '—'];
+    }));
+    vaRows('va-top', d.jugadores_v5.map((x) => [x.jugador, x.minutos, x.sesiones, x.gano ? 'Sí' : 'No']));
+    document.getElementById('va-empty').textContent = b ? '' : 'Todavía no hay sesiones de la versión mejorada: esta sección se llena sola cuando se juegue el build nuevo.';
+  } catch (e) { document.getElementById('va-empty').textContent = 'No se pudo leer la comparación de la base del juego.'; }
+}
+cargarAntesDespues();
+setInterval(cargarAntesDespues, 60000);
+
+let VA_NIV = null, VA_SEL = 0;
+function vaTabs() {
+  const box = document.getElementById('va-tabs'); box.innerHTML = '';
+  ['General'].concat([1,2,3,4,5,6].map((n) => 'Nivel ' + n)).forEach((t, i) => {
+    const b = document.createElement('button'); b.className = 'va-tab'; b.type = 'button'; b.setAttribute('role', 'tab'); b.textContent = t; b.setAttribute('aria-selected', i === VA_SEL ? 'true' : 'false');
+    b.onclick = () => { VA_SEL = i; vaTabs(); vaNivel(); }; box.appendChild(b);
+  });
+}
+function vaNivel() {
+  document.getElementById('va-general').hidden = VA_SEL !== 0;
+  document.getElementById('va-nivel').hidden = VA_SEL === 0;
+  if (VA_SEL === 0 || !VA_NIV) return;
+  const n = VA_SEL;
+  document.getElementById('va-nv-t').textContent = NOMBRES_NIVEL[n];
+  const a = VA_NIV.resumen.find((x) => x.nivel === n && x.version === 'v2.0');
+  const bs = VA_NIV.resumen.filter((x) => x.nivel === n && x.version !== 'v2.0');
+  const b = bs.length ? bs.reduce((acc, x) => ({sesiones: acc.sesiones + x.sesiones, victorias: acc.victorias + x.victorias, w: acc.w + x.sesiones, dur_media_s: acc.dur_media_s + x.dur_media_s * x.sesiones, estres: acc.estres + x.estres * x.sesiones, caidas: acc.caidas + x.caidas * x.sesiones, saltos: acc.saltos + x.saltos * x.sesiones, dashes: acc.dashes + x.dashes * x.sesiones, letras: acc.letras + x.letras * x.sesiones}), {sesiones: 0, victorias: 0, w: 0, dur_media_s: 0, estres: 0, caidas: 0, saltos: 0, dashes: 0, letras: 0}) : null;
+  if (b) ['dur_media_s','estres','caidas','saltos','dashes','letras'].forEach((k) => { b[k] = +(b[k] / b.w).toFixed(1); });
+  const pct = (x) => x ? Math.round(100 * x.victorias / Math.max(1, x.sesiones)) + '%' : '—';
+  const m = [['Sesiones', 'sesiones', 0], ['Terminan el nivel', null, 1], ['Duración media (s)', 'dur_media_s', 0], ['Estrés por sesión', 'estres', -1], ['Caídas por sesión', 'caidas', -1], ['Saltos por sesión', 'saltos', 1], ['Dashes por sesión', 'dashes', 1], ['Letras por sesión', 'letras', 1]];
+  vaRows('va-nv-comp', m.map((r) => {
+    const x = r[1] ? (a ? a[r[1]] : '—') : pct(a), y = r[1] ? (b ? b[r[1]] : 'sin datos') : (b ? pct(b) : 'sin datos');
+    const dl = document.createElement('span');
+    const xv = parseFloat(x), yv = parseFloat(y);
+    if (!isNaN(xv) && !isNaN(yv) && xv !== 0) { const p = Math.round((yv - xv) / xv * 100); dl.textContent = (p > 0 ? '+' : '') + p + '%'; dl.className = 'va-delta ' + (r[2] === 0 || p === 0 ? '' : ((p > 0) === (r[2] > 0) ? 'good' : 'bad')); } else dl.textContent = '—';
+    return [r[0], x, y, dl];
+  }));
+  const tr = VA_NIV.tramos.filter((x) => x.nivel === n);
+  const tramos = [...new Set(tr.map((x) => x.tramo))].sort((p, q) => p - q);
+  const maxE = Math.max(1, ...tr.map((x) => x.estres));
+  vaRows('va-nv-tr', tramos.map((t) => {
+    const p = tr.find((x) => x.tramo === t && x.version === 'v2.0');
+    const qs = tr.filter((x) => x.tramo === t && x.version !== 'v2.0');
+    const q = qs.length ? {llegan: qs.reduce((s2, x) => s2 + x.llegan, 0), estres: qs.reduce((s2, x) => s2 + x.estres, 0)} : null;
+    return ['Tramo ' + t, p ? p.llegan : '—', p ? vaBar(p.estres, maxE, true) : '—', q ? q.llegan : '—', q ? vaBar(q.estres, maxE, false) : '—'];
+  }));
+}
+async function cargarNiveles() {
+  try {
+    const r = await fetch(SB_URL + '/rest/v1/rpc/surie_dashboard_v5_niveles', {method: 'POST', headers: {apikey: SB_KEY, 'Content-Type': 'application/json'}, body: '{}'});
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    VA_NIV = await r.json(); vaNivel();
+  } catch (e) { /* se queda la vista general */ }
+}
+vaTabs(); cargarNiveles(); setInterval(cargarNiveles, 60000);
+
+
 </script>
 </body>
 </html>
